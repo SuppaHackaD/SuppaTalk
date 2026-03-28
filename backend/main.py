@@ -33,7 +33,7 @@ class ConnectionManager:
         
         # --- A ALMA DO SERVIDOR (Vamos poder editar isso via painel depois!) ---
         self.server_config = {
-            "tab_name": "SuppaChat",
+            "tab_name": "SuppaTalk",
             "server_name": "LocalHost Server",
             "text_channels": ["geral", "comandos-bot"],
             "voice_channels": ["Geral"]
