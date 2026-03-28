@@ -1,0 +1,239 @@
+/* Paleta de cores baseada no Discord atual */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; height: 100vh; background-color: #313338; color: #dbdee1; overflow: hidden; }
+
+/* Barra Lateral (Canais) */
+.sidebar { width: 240px; background-color: #2b2d31; display: flex; flex-direction: column; padding: 15px 10px; }
+/* --- CABEÇALHO DO SERVIDOR (Com engrenagem oculta) --- */
+.server-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid #1e1f22; cursor: pointer; transition: 0.2s;
+}
+.server-header:hover { background-color: #35373c; }
+.server-name-text { font-weight: 800; font-size: 15px; color: #f2f3f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-server-settings { 
+    background: transparent; border: none; color: #b5bac1; font-size: 16px; 
+    cursor: pointer; opacity: 0; transition: 0.2s; 
+}
+.server-header:hover .btn-server-settings { opacity: 1; }
+.btn-server-settings:hover { color: #dbdee1; transform: rotate(90deg); }
+
+/* --- MODAL DE CONFIGURAÇÕES (Estilo Discord) --- */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+    background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; 
+}
+.modal-content { 
+    background: #313338; padding: 24px; border-radius: 8px; width: 400px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); 
+}
+.modal-content h3 { margin-top: 0; color: #f2f3f5; margin-bottom: 20px; text-align: center; font-size: 20px; }
+.modal-content label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 800; color: #b5bac1; text-transform: uppercase; }
+.discord-input { 
+    width: 100%; padding: 10px; background: #1e1f22; border: none; border-radius: 4px; 
+    color: #dbdee1; margin-bottom: 20px; box-sizing: border-box; font-size: 14px; 
+}
+.discord-input:focus { outline: 1px solid #5865f2; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+.btn-cancel { background: transparent; color: #dbdee1; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
+.btn-cancel:hover { text-decoration: underline; }
+.btn-save { background: #5865f2; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+.btn-save:hover { background: #4752c4; }
+.channel { padding: 8px; margin-bottom: 5px; border-radius: 4px; cursor: pointer; color: #949ba4; transition: 0.2s; }
+.channel:hover { background-color: #35373c; color: #dbdee1; }
+.channel.active { background-color: #404249; color: #fff; }
+
+/* Painel de Controle de Voz (Embaixo da Sidebar) */
+.btn-discord { background-color: #5865f2; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%; margin-bottom: 5px; font-weight: 500; transition: 0.2s; }
+.btn-discord:hover:not(:disabled) { background-color: #4752c4; }
+.btn-discord:disabled { background-color: #4f545c; cursor: not-allowed; color: #949ba4; }
+
+/* Área do Chat */
+.chat-area { flex: 1; display: flex; flex-direction: column; background-color: #313338; }
+.chat-header { padding: 15px; border-bottom: 1px solid #1e1f22; font-weight: bold; color: #f2f3f5; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); z-index: 2; }
+.messages { flex: 1; padding: 20px; overflow-y: auto; list-style: none; display: flex; flex-direction: column; gap: 15px; }
+
+/* Mensagens */
+.msg-wrapper { display: flex; flex-direction: column; }
+.msg-author { font-weight: 600; color: #f2f3f5; font-size: 15px; margin-bottom: 2px; }
+.msg-content { color: #dbdee1; font-size: 14px; line-height: 1.4; }
+
+/* Barra de Digitação */
+.input-area { padding: 20px; background-color: #313338; }
+.input-box { display: flex; background-color: #383a40; border-radius: 8px; padding: 10px 15px; }
+.input-box input { flex: 1; background: transparent; border: none; color: #dbdee1; font-size: 15px; outline: none; }
+.input-box input::placeholder { color: #80848e; }
+
+/* --- TELA DE LOGIN --- */
+.login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30, 31, 34, 0.95); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+.login-box { background: #313338; padding: 30px; border-radius: 8px; text-align: center; width: 320px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
+.login-box h2 { color: #f2f3f5; margin-bottom: 20px; }
+.login-box input { width: 100%; padding: 12px; border-radius: 4px; border: none; background: #1e1f22; color: #dbdee1; margin-bottom: 15px; outline: none; font-size: 15px; }
+
+/* --- ESTRUTURA DA MENSAGEM COM AVATAR --- */
+.msg-wrapper { display: flex; flex-direction: row; gap: 15px; margin-bottom: 15px; }
+.msg-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #2b2d31; flex-shrink: 0; overflow: hidden; }
+.msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.msg-body { display: flex; flex-direction: column; justify-content: center; }
+.msg-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.msg-author { font-weight: 600; color: #f2f3f5; font-size: 15px; }
+.msg-time { font-size: 11px; color: #949ba4; }
+.msg-content { color: #dbdee1; font-size: 14px; line-height: 1.4; }
+
+/* --- AÇÕES DA MENSAGEM (APAGAR/EDITAR) --- */
+.msg-wrapper { position: relative; } /* Necessário para posicionar os botões */
+
+.msg-actions {
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    background-color: #313338;
+    border: 1px solid #1e1f22;
+    border-radius: 4px;
+    padding: 2px;
+    display: none; /* Escondido por padrão */
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.msg-wrapper:hover .msg-actions {
+    display: flex; /* Aparece ao passar o mouse */
+    gap: 5px;
+}
+
+.btn-action {
+    background: transparent;
+    border: none;
+    color: #b5bac1;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.btn-action:hover {
+    background-color: #404249;
+    color: #f2f3f5;
+}
+
+.btn-action.delete:hover {
+    background-color: #da373c;
+    color: white;
+}
+
+/* --- ESTILOS DE RESPOSTA (REPLY) --- */
+.reply-preview { font-size: 12px; color: #b5bac1; display: flex; align-items: center; gap: 5px; margin-bottom: 4px; padding-left: 40px; position: relative; }
+/* O "fio" curvo que liga as mensagens */
+.reply-preview::before { content: ''; position: absolute; left: 15px; top: 50%; width: 20px; height: 15px; border-left: 2px solid #4f545c; border-top: 2px solid #4f545c; border-top-left-radius: 6px; }
+.reply-author { font-weight: 600; cursor: pointer; }
+.reply-author:hover { text-decoration: underline; }
+.reply-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; cursor: pointer; }
+.reply-text:hover { color: #dbdee1; }
+
+/* Barra indicadora acima do input de texto */
+.replying-indicator { background-color: #2b2d31; padding: 10px 15px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: none; align-items: center; justify-content: space-between; font-size: 13px; color: #b5bac1; margin-bottom: -5px; z-index: 1; position: relative; }
+.replying-indicator .close-btn { cursor: pointer; font-weight: bold; font-size: 16px; }
+.replying-indicator .close-btn:hover { color: #f2f3f5; }
+
+/* --- PAINEL DO USUÁRIO LOGADO --- */
+.user-panel { background-color: #232428; padding: 10px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1e1f22; }
+.user-info { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+.user-info img { width: 32px; height: 32px; border-radius: 50%; background-color: #2b2d31; object-fit: cover; }
+.user-info .username { color: #f2f3f5; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-actions { display: flex; gap: 2px; }
+.btn-action-panel { background: transparent; border: none; color: #b5bac1; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 4px; transition: 0.2s; }
+.btn-action-panel:hover { background-color: #404249; color: #f2f3f5; }
+.btn-action-panel.logout:hover { color: #da373c; }
+
+/* --- MENU DE CONFIGURAÇÕES --- */
+.settings-box { width: 400px; text-align: left; }
+.settings-box h2 { text-align: center; color: #f2f3f5; margin-bottom: 20px; }
+.settings-form label { display: block; color: #b5bac1; font-size: 12px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+.settings-form input { width: 100%; padding: 10px; border-radius: 4px; border: none; background: #1e1f22; color: #dbdee1; margin-bottom: 5px; outline: none; font-size: 14px; }
+.settings-help { font-size: 11px; color: #949ba4; margin-top: 0; margin-bottom: 20px; }
+.settings-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+.btn-cancel { background-color: #4f545c; }
+.btn-cancel:hover { background-color: #5d6269; }
+.btn-save { background-color: #248046; }
+.btn-save:hover { background-color: #1a6334; }
+
+
+/* --- CATEGORIAS E CANAIS --- */
+.category-header { 
+    font-size: 11px; font-weight: 700; color: #949ba4; padding: 0 8px; margin-top: 15px; margin-bottom: 5px; letter-spacing: 0.5px; 
+    display: flex; justify-content: space-between; align-items: center; 
+}
+.btn-add-channel {
+    background: transparent; border: none; color: #949ba4; cursor: pointer; font-size: 16px; line-height: 1; padding: 0 4px; border-radius: 3px; transition: 0.2s;
+}
+.btn-add-channel:hover { color: #dbdee1; background-color: #313338; }
+.channel span { color: #80848e; margin-right: 5px; font-size: 16px; font-weight: normal; }
+.channel:hover span { color: #dbdee1; }
+.voice-channel { color: #949ba4; }
+
+/* --- PAINEL DE VOZ ATIVA (Fica em cima do Painel de Usuário) --- */
+.voice-connected-panel { background-color: #232428; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1e1f22; border-bottom: 1px solid #1e1f22; margin-top: auto; }
+.voice-info { display: flex; flex-direction: column; }
+.btn-disconnect { background: transparent; border: none; color: #b5bac1; cursor: pointer; font-size: 18px; padding: 5px; border-radius: 4px; transition: 0.2s; }
+.btn-disconnect:hover { background-color: #404249; color: #da373c; }
+
+/* Ajuste no Painel de Usuário para não ter margem extra agora que o de voz empurra ele */
+.user-panel { margin-top: 0; border-top: none; }
+
+/* --- RADAR DE VOZ (Usuários na Call) --- */
+.voice-user-list { padding-left: 28px; margin-top: 2px; margin-bottom: 5px; display: flex; flex-direction: column; gap: 2px; }
+.voice-user-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; cursor: pointer; border-radius: 4px; transition: 0.1s; }
+.voice-user-item:hover { background-color: #35373c; }
+.voice-user-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; outline: 2px solid #232428; }
+.voice-user-name { font-size: 13px; color: #dbdee1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- MENU DE CONTEXTO (Botão Direito) --- */
+.context-menu {
+    position: absolute; background: #111214; border-radius: 4px; width: 220px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5); z-index: 2000; overflow: hidden;
+    border: 1px solid #1e1f22; display: none;
+}
+.context-menu-header { 
+    padding: 12px; border-bottom: 1px solid #1e1f22; font-weight: bold; 
+    color: #f2f3f5; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+.context-menu-body { padding: 12px; }
+.context-menu-body label { 
+    font-size: 11px; color: #b5bac1; text-transform: uppercase; font-weight: 800; 
+    margin-bottom: 8px; display: flex; justify-content: space-between; 
+}
+.context-menu-body input[type="range"] { 
+    width: 100%; cursor: pointer; accent-color: #5865f2; 
+}
+
+/* --- MEMBER LIST (Barra Direita) --- */
+.members-sidebar {
+    width: 240px; background-color: #2b2d31; display: flex; flex-direction: column;
+    border-left: 1px solid #1e1f22; height: 100vh;
+}
+.members-header {
+    padding: 16px; font-weight: 800; color: #949ba4; font-size: 12px;
+    text-transform: uppercase; border-bottom: 1px solid #1e1f22;
+}
+.members-list-container { padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.member-item {
+    display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+    border-radius: 4px; cursor: pointer; transition: 0.1s;
+}
+.member-item:hover { background-color: #35373c; }
+.member-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.member-name { font-size: 14px; color: #949ba4; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-item:hover .member-name { color: #dbdee1; }
+
+/* --- ARO VERDE DE VOZ (Blindado) --- */
+.speaking {
+    outline: 2px solid #43b581 !important;
+    box-shadow: 0 0 0 4px rgba(67, 181, 129, 0.4) !important;
+    transition: 0.1s ease-in-out;
+}
+
+/* --- BOTÃO DE OCULTAR MEMBROS --- */
+.btn-toggle-members {
+    position: absolute; top: 15px; right: 20px; z-index: 100;
+    background: #313338; color: #b5bac1; border: none; padding: 6px 10px;
+    border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 16px;
+}
+.btn-toggle-members:hover { color: #dbdee1; background: #404249; }

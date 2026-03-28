@@ -1,0 +1,26 @@
+services:
+  api_server:
+    build: ./backend
+    container_name: suppa_backend
+    ports:
+      - "19191:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env 
+
+  bot_client:
+    build: ./backend
+    container_name: suppa_bot
+    network_mode: "host"
+    command: ["python", "-u", "mvp_bot_client.py"] 
+    depends_on:
+      - api_server 
+    volumes:
+      - ./backend:/app
+      # ATENÇÃO: Mapeando a pasta de músicas para o container do bot!
+      # Ajuste o lado esquerdo ("caminho_musicas e caminho_playlists") para o caminho real no seu PC
+      - /caminho_musicas:/app/musicas
+      - /caminho_playlists:/app/playlists
+    env_file:
+      - ./backend/.env

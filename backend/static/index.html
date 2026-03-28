@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Carregando...</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <h2>Identificação</h2>
+            <form onsubmit="doLogin(event)">
+                <input type="text" id="usernameInput" autocomplete="off" placeholder="Seu apelido na rede" required autofocus/>
+                <button type="submit" class="btn-discord">Entrar no Servidor</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="settingsOverlay" class="login-overlay" style="display: none;">
+        <div class="login-box settings-box">
+            <h2>Configurações</h2>
+            <div class="settings-form">
+                <label for="editUsername">Nome de Exibição</label>
+                <input type="text" id="editUsername" autocomplete="off" />
+                
+                <label for="editAvatar" style="margin-top: 15px;">URL da Foto de Perfil</label>
+                <input type="text" id="editAvatar" autocomplete="off" placeholder="Cole o link de uma imagem .jpg/.png ou gif..." />
+                <p class="settings-help">Deixe em branco para usar o robô gerador automático.</p>
+                
+                <div class="settings-buttons">
+                    <button class="btn-discord btn-cancel" style="width: auto;" onclick="closeSettings()">Cancelar</button>
+                    <button class="btn-discord btn-save" style="width: auto;" onclick="saveSettings()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="server-header" onclick="openServerSettings()">
+            <div id="serverNameDisplay" class="server-name-text">Conectando...</div>
+            <button class="btn-server-settings" title="Configurações do Servidor">⚙️</button>
+        </div>
+        
+        <div class="category-header">
+            <span>CANAIS DE TEXTO</span>
+            <button class="btn-add-channel" onclick="createNewChannel('text')" title="Criar Canal Texto">+</button>
+        </div>
+        <div id="textChannelsList"></div>
+        
+        <div class="category-header">
+            <span>CANAIS DE VOZ</span>
+            <button class="btn-add-channel" onclick="createNewChannel('voice')" title="Criar Canal Voz">+</button>
+        </div>
+        <div id="voiceChannelsList"></div>
+
+        <div id="voiceConnectedPanel" class="voice-connected-panel" style="display: none;">
+            <div class="voice-info">
+                <span style="color: #43b581; font-weight: bold; font-size: 13px;">Voz Conectada</span>
+                <span id="currentVoiceChannelName" style="color: #949ba4; font-size: 11px;">...</span>
+            </div>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <button id="btnMute" class="btn-action-panel" title="Mutar Microfone" onclick="toggleMute()" style="font-size: 18px;">🎤</button>
+                <button class="btn-disconnect" title="Desconectar" onclick="disconnectVoice()">📞❌</button>
+            </div>
+        </div>
+
+        <div id="userPanel" class="user-panel" style="display: none;">
+            <div class="user-info">
+                <img id="myAvatarDisplay" src="" alt="Meu Avatar">
+                <span id="myUsernameDisplay" class="username">Usuario</span>
+            </div>
+            <div class="user-actions">
+                <button class="btn-action-panel" title="Configurações" onclick="openSettings()">⚙️</button>
+                <button class="btn-action-panel logout" title="Sair" onclick="doLogout()">🚪</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-area">
+        <button class="btn-toggle-members" onclick="toggleMemberList()" title="Mostrar/Ocultar Membros">👥</button>
+        <div id="chatHeader" class="chat-header"># geral</div>
+        <ul id="messages" class="messages"></ul>
+        <div class="input-area">
+            <div id="replyIndicator" class="replying-indicator">
+                <span>A responder a <strong id="replyTargetName">Misterioso</strong></span>
+                <span class="close-btn" title="Cancelar Resposta" onclick="cancelReply()">✕</span>
+            </div>
+            <form class="input-box" onsubmit="sendMessage(event)">
+                <input type="text" id="messageText" autocomplete="off" placeholder="Conversar em #geral"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="members-sidebar" id="membersSidebar">
+        <div class="members-header">Online — <span id="onlineCount">0</span></div>
+        <div class="members-list-container" id="membersList">
+            </div>
+    </div>
+
+
+    <div id="serverSettingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>⚙️ Visão do Arquiteto</h3>
+            
+            <label>Nome do Servidor (Covil):</label>
+            <input type="text" id="inputServerName" class="discord-input" placeholder="Ex: Templo da Magia">
+            
+            <label>Nome da Aba (Navegador):</label>
+            <input type="text" id="inputTabName" class="discord-input" placeholder="Ex: MVP Discord">
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeServerSettings()">Cancelar</button>
+                <button class="btn-save" onclick="saveServerSettings()">Salvar Realidade</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="userSettingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>⚙️ Configurações de Perfil</h3>
+            
+            <label>Seu Nome de Usuário:</label>
+            <input type="text" id="inputUsername" class="discord-input" placeholder="Ex: SuppaHacka">
+            
+            <label>URL do seu Avatar (Opcional):</label>
+            <input type="text" id="inputAvatar" class="discord-input" placeholder="Cole o link da imagem aqui">
+
+            <label style="margin-top: 10px; font-size: 12px; color: #b5bac1;">TOKEN VIP (OPCIONAL)</label>
+            <input type="password" id="inputToken" class="settings-input" placeholder="Sua chave de acesso...">
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeSettings()">Cancelar</button>
+                <button class="btn-save" onclick="saveSettings()">Salvar Perfil</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userContextMenu" class="context-menu">
+        <div class="context-menu-header" id="contextMenuUserName">Usuário</div>
+        <div class="context-menu-body">
+            <label>Volume <span id="contextVolPercentage">100%</span></label>
+            <input type="range" id="contextVolumeSlider" min="0" max="1" step="0.01" value="1">
+        </div>
+    </div>
+    
+    <audio id="remoteAudio" autoplay></audio>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>
